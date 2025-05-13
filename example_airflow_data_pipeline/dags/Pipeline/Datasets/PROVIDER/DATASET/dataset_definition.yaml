@@ -1,0 +1,27 @@
+enabled: true
+provider: EXAMPLE_PROVIDER
+connection: SFTP
+target_database: EXAMPLE_DATABASE
+target_schema: EXAMPLE_SCHEMA
+target_table: EXAMPLE_TABLE
+date_start: '2025-01-24'
+columns:
+  - name: Example_ID
+    data_type: int
+  - name: Event_Category
+    data_type: string
+  - name: Event_Text
+    data_type: string
+primary_key: Event ID
+operation: append
+sftp_metadata:
+  credentials_secret: provider/sftp/sftp.example.com
+  source_path: source/folder/
+  file_prefix: example_events_data_
+  compressed: true
+  compression_method: gz
+  compressed_file_prefix: example_events_data_
+  compressed_file_type: csv
+  delimiter: ','
+  quote_char: '"'
+  skip_rows: 1

@@ -1,0 +1,11 @@
+services:
+  streamlit:
+    build: .
+    container_name: example_streamlit
+    env_file: ./.streamlit/streamlit.env
+    ports:
+      - 8501:8501
+    volumes:
+      - ./app/:/streamlit/app/
+      - ./.streamlit/:/streamlit/.streamlit/
+      - ../example_data_pipeline_airflow/:/example_data_pipeline_airflow/

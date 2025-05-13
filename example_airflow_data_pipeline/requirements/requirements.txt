@@ -1,0 +1,15 @@
+boto3
+pandas
+snowflake-connector-python
+snowflake-connector-python[pandas]
+openpyxl
+apache-airflow-providers-microsoft-mssql[common.sql]
+apache-airflow[odbc]
+apache-airflow[amazon]
+pytest
+pytest-depends
+snowflake-sqlalchemy
+s3fs
+pyyaml
+Office365-REST-Python-Client
+paramiko

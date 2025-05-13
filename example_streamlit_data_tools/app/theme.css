@@ -1,0 +1,41 @@
+body{
+    font-family: "Source Sans Pro", sans-serif; 
+}
+
+button[kind="secondary"] {
+    background-color: #4076A8;
+    color: white;
+    border-radius: 10px;
+    float: left;
+}
+
+button[kind="primary"] {
+    border-radius: 10px;
+}
+
+div[data-testid=stToastContainer] {
+    padding: 1% 4% 65% 2%;
+    align-items: center;
+}
+    
+div[data-testid=stToast] {
+    padding: 20px 10px 40px 10px;
+    width: 20%;
+    text-align: center;
+}
+    
+[data-testid=stToastContainer] [data-testid=stMarkdownContainer] > p {
+    font-size: 20px; 
+    font-style: normal; 
+    font-weight: 400;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+/* div[data-testid="stColumn"] {
+    width: fit-content !important;
+    flex: unset;
+} */
+/* div[data-testid="stColumn"] * {
+    width: fit-content !important;
+} */

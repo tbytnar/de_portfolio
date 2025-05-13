@@ -1,0 +1,13 @@
+altair
+pandas==2.1.4
+streamlit==1.43.0
+streamlit-auth0-component
+streamlit-aggrid
+streamlit-extras
+streamlit-antd
+pyjwt
+cryptography
+pyyaml
+snowflake-connector-python
+SQLAlchemy==1.4.54
+pendulum

@@ -1,0 +1,106 @@
+name: Continuous Delivery
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  start-runner:
+    runs-on: ubuntu-latest
+    outputs:
+        label: ${{ steps.start-ec2-runner.outputs.label }}
+        ec2-instance-id: ${{ steps.start-ec2-runner.outputs.ec2-instance-id }}
+    steps:
+      - name: Configure AWS Credentials 2
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+      - name: Start EC2 runner
+        id: start-ec2-runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: start
+          github-token: ${{ secrets.GH_TOKEN }}
+          ec2-image-id: ami-123141513514
+          ec2-instance-type: t2.micro
+          subnet-id: subnet-123145566
+          security-group-id: sg-123124124124
+  do-the-job:
+    name: Do the job on the runner
+    needs: start-runner # required to start the main job when the runner is ready
+    runs-on: ${{ needs.start-runner.outputs.label }} # run the job on the newly created runner
+    steps:
+      # Note: we need to checkout the repository at the workflow sha in case during the workflow
+      # the branch was updated. To keep PSR working with the configured release branches,
+      # we force a checkout of the desired release branch but at the workflow sha HEAD.
+      - name: Setup | Checkout Repository at workflow sha
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.sha }}
+      - name: Set up python
+        id: setup-python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.16'
+
+      - name: Setup | Force correct release branch on workflow sha
+        run: |
+          git checkout -B ${{ github.ref_name }} ${{ github.sha }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+            virtualenvs-create: false
+
+      - name: Install dependencies
+        run: |
+          poetry install
+        env:
+          POETRY_REPOSITORIES_URL: ${{secrets.POETRY_REPOSITORIES_URL}}
+          POETRY_HTTP_BASIC_USERNAME: ${{secrets.POETRY_HTTP_BASIC_USERNAME}}
+          POETRY_HTTP_BASIC_PASSWORD: ${{secrets.POETRY_HTTP_BASIC_PASSWORD}}
+
+      - name: Python Semantic Release
+        run: |
+          git config --system http.sslVerify false
+          git config --system user.name "github-actions"
+          git config --system user.email "action@github.com"
+          semantic-release version --no-vcs-release --no-changelog
+        env:
+          POETRY_REPOSITORIES_URL: ${{secrets.POETRY_REPOSITORIES_URL}}
+          POETRY_HTTP_BASIC_USERNAME: ${{secrets.POETRY_HTTP_BASIC_USERNAME}}
+          POETRY_HTTP_BASIC_PASSWORD: ${{secrets.POETRY_HTTP_BASIC_PASSWORD}}
+
+      - name: Publish package with Poetry
+        run: |
+          poetry publish --repository REPOSITORY_NAME 
+        env:
+          POETRY_REPOSITORIES_URL: ${{secrets.POETRY_REPOSITORIES_URL}}
+          POETRY_HTTP_BASIC_USERNAME: ${{secrets.POETRY_HTTP_BASIC_USERNAME}}
+          POETRY_HTTP_BASIC_PASSWORD: ${{secrets.POETRY_HTTP_BASIC_PASSWORD}}
+
+  stop-runner:
+    name: Stop self-hosted EC2 runner
+    needs:
+      - start-runner # required to get output from the start-runner job
+      - do-the-job # required to wait when the main job is done
+    runs-on: ubuntu-latest
+    if: ${{ always() }} # required to stop the runner even if the error happened in the previous jobs
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET_KEY }}
+          aws-region: us-east-1
+      - name: Stop EC2 runner
+        uses: machulav/ec2-github-runner@v2
+        with:
+          mode: stop
+          github-token: ${{ secrets.GH_TOKEN }}
+          label: ${{ needs.start-runner.outputs.label }}
+          ec2-instance-id: ${{ needs.start-runner.outputs.ec2-instance-id }}

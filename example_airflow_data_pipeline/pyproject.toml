@@ -1,0 +1,23 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "dags/packages/Tests",
+]
+log_file_level = "info"
+log_cli = 1
+markers = [
+    "s3_append: marks tests as s3 append (deselect with '-m \"not s3_append\"')",
+    "s3_replace: marks tests as s3 replace (deselect with '-m \"not s3_replace\"')",
+    "s3_upsert: marks tests as s3 upsert (deselect with '-m \"not s3_upsert\"')",
+]
+
+[tool.ruff]
+line-length = 188
+unfixable = ["F401"]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 280
+
+[tool.ruff.lint]
+# Disable fix for unused imports (`F401`).
+unfixable = ["F401"]

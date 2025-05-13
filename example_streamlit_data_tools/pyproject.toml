@@ -1,0 +1,9 @@
+[tool.ruff]
+line-length = 188
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 280
+
+[tool.ruff.lint]
+# Disable fix for unused imports (`F401`).
+unfixable = ["F401"]
