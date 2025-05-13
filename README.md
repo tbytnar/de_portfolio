@@ -2,7 +2,9 @@
 
 ## Overview
 
-This repository contains multiple components for data engineering workflows, including Airflow pipelines and a report generation framework. The primary focus is on data ingestion, transformation, loading, and reporting using tools like Airflow, Snowflake, and AWS S3.
+This repository contains multiple components for data engineering workflows, including Airflow pipelines and a report generation framework. The primary focus is on data ingestion, transformation, loading, and reporting using tools like Airflow, Snowflake, and AWS S3.  
+
+NOTE: This code is NOT intented for production purposes.  In many places, the code was refactored to exclude any references to business sensitive information.
 
 ---
 
@@ -138,15 +140,6 @@ The `airflow_report_generator` is a framework for generating dynamic reports usi
 3. Write the SQL query in `query.sql` and the table schema in `table_ddl.sql`.
 
 4. Trigger the `universal_report_generator.py` DAG in the Airflow UI.
-
----
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a feature branch.
-3. Submit a pull request with a detailed description of your changes.
 
 ---
 
