@@ -1,0 +1,28 @@
+enabled: true
+recipient: Example_Recipient
+agreement_name: Example_Agreement
+frequency: hour
+start_of_week: MONDAY
+schedule: 15 8-20 * * *
+database: EXAMPLE_DATABASE
+target_schema: EXAMPLE_SCHEMA
+target_table: EXAMPLE_TABLE
+remediation_type: NONE
+remediation_location: NONE
+query_overrides:
+destinations:
+  - description: CSV_VIA_SFTP
+    formatter:
+      type: csv
+      filename_format: Example_Recipient_Example_Report_%Y%m%d%H%M%S%H%M%S.csv
+      carboncopy_path: Example_Recipient/Example_Report/
+      args:
+        column_seperator: ','
+    submitter:
+      type: sftp
+      enabled: true
+      args:
+        credentials_secret: example_recipient/sftp/sftp.example.com
+        hostname: sftp.example.com
+        port: '22'
+        target_directory: /example_report/

@@ -1,0 +1,18 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = [
+    "dags/packages/Tests",
+]
+log_file_level = "info"
+log_cli = 1
+
+[tool.ruff]
+line-length = 188
+unfixable = ["F401"]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 280
+
+[tool.ruff.lint]
+# Disable fix for unused imports (`F401`).
+unfixable = ["F401"]
